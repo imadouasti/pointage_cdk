@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include pointage_cdk *.css
+recursive-include pointage_cdk *.csv
+recursive-include pointage_cdk *.html
+recursive-include pointage_cdk *.ico
+recursive-include pointage_cdk *.js
+recursive-include pointage_cdk *.json
+recursive-include pointage_cdk *.md
+recursive-include pointage_cdk *.png
+recursive-include pointage_cdk *.py
+recursive-include pointage_cdk *.svg
+recursive-include pointage_cdk *.txt
+recursive-exclude pointage_cdk *.pyc
