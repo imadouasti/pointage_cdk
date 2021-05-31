@@ -1,0 +1,120 @@
+import frappe
+import calendar
+
+from datetime import datetime
+
+def get_month_map():
+	return frappe._dict({
+		"January": 1,
+		"February": 2,
+		"March": 3,
+		"April": 4,
+		"May": 5,
+		"June": 6,
+		"July": 7,
+		"August": 8,
+		"September": 9,
+		"October": 10,
+		"November": 11,
+		"December": 12
+		})
+from frappe.utils import cstr, get_datetime, formatdate
+
+@frappe.whitelist()
+def get_unmarked_days(employee, month, filters=None, debug=False, cache=False):
+	starting_day_of_current_year = datetime.now().date().replace(month=1, day=1)
+	ending_day_of_current_year = datetime.now().date().replace(month=12, day=31)
+
+
+	month_map = get_month_map()
+
+	today = get_datetime()
+
+	dates_of_month = ['{}-{}-{}'.format(today.year, month_map[month], r) for r in range(1, calendar.monthrange(today.year, month_map[month])[1] + 1)]
+
+	length = len(dates_of_month)
+	month_start, month_end = dates_of_month[0], dates_of_month[length-1]
+
+
+	records = frappe.get_all("Attendance", fields = ['attendance_date', 'employee', 'work_hours', 'total_heures_supp__payées_', 'total_heures_supp_récup_'] , filters = [
+		["attendance_date", ">=", month_start],
+		["attendance_date", "<=", month_end],
+		["employee", "=", employee],
+		["docstatus", "!=", 2]
+	])
+	recordsValues = frappe.get_all("Attendance", fields = ['attendance_date', 'employee', 'working_hours', 'total_heures_supp__payées_', 'total_heures_supp_récup_'] , filters = [
+		["attendance_date", ">=", month_start],
+		["attendance_date", "<=", month_end],
+		["employee", "=", employee],
+		["docstatus", "!=", 2]])
+	hours = []
+
+
+	if len(recordsValues) > 0:
+		hours = [recordsValues[0].total_heures_supp__payées_, recordsValues[0].total_heures_supp_récup_]
+
+	extra_workingHours = sum([int(record.work_hours)-7 for record in records])
+	extra_hours_of_month = extra_workingHours
+	marked_days = [get_datetime(record.attendance_date) for record in records]
+	mark_extra_hours(employee, marked_days, extra_hours_of_month)
+
+	unmarked_days = []
+	for date in dates_of_month:
+		date_time = get_datetime(date)
+		weekdays = [5,6]
+		if today.day == date_time.day and today.month == date_time.month:
+			break
+		if date_time not in marked_days and date_time.weekday() not in weekdays:
+			unmarked_days.append(date)
+
+
+	# recordsAllyear = frappe.get_all("Attendance", fields=['sum(extra_hours_of_month)'], filters=[
+	# 	["attendance_date", ">=", starting_day_of_current_year],
+	# 	["attendance_date", "<=", ending_day_of_current_year],
+	# 	["employee", "=", employee],
+	# 	["docstatus", "!=", 2]
+	# ], group_by='extra_hours_of_month')
+	return hours
+
+
+@frappe.whitelist()
+def mark_bulk_attendance(data):
+	import json
+	from pprint import pprint
+	if isinstance(data, frappe.string_types):
+		data = json.loads(data)
+	data = frappe._dict(data)
+	company = frappe.get_value('Employee', data.employee, 'company')
+	for date in data.unmarked_days:
+		doc_dict = {
+			'doctype': 'Attendance',
+			'employee': data.employee,
+			'attendance_date': get_datetime(date),
+			'status': data.status,
+			'company': company,
+			'total_heures_supp_récup_': data.total_heures_supp_récup_,
+			'total_heures_supp__payées_': data.total_heures_supp__payées_
+		}
+		attendance = frappe.get_doc(doc_dict).insert()
+		attendance.submit()
+
+def mark_extra_hours(employee, marked_days, recordMonth):
+	import json
+	from pprint import pprint
+
+	company = frappe.get_value('Employee', employee, 'company')
+	for date in marked_days:
+		doc_dict = {
+			'doctype': 'Attendance',
+			'employee': employee,
+			'attendance_date': get_datetime(date),
+			'company': company,
+			'extra_hours_of_month': recordMonth,
+		}
+		attendance = frappe.get_doc(doc_dict)
+		attendance.save()
+	
+
+def setValuesManagement(doc):
+
+	return "Hello"

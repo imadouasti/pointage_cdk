@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "creation": "2021-04-01 10:56:14.652386",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "hsp",
+  "hsr",
+  "amended_from",
+  "weeklypointage"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "hsp",
+   "fieldtype": "Int",
+   "label": "hsp"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "hsr",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "hsr"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "pointage",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "weeklypointage",
+   "fieldtype": "Table",
+   "label": "weeklypointage",
+   "options": "weeklypointage"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-04-27 07:21:05.099706",
+ "modified_by": "Administrator",
+ "module": "Pointage Cdk",
+ "name": "pointage",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

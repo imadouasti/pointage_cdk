@@ -33,8 +33,8 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+# doctype_js = {"Attendance" : "public/js/Attendance_list.js"}
+doctype_list_js = {"Attendance" : "public/js/Attendance_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -74,29 +74,34 @@ app_license = "MIT"
 # permission_query_conditions = {
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
-#
+
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
-# DocType Class
-# ---------------
-# Override standard doctype classes
+# # DocType Class
+# # ---------------
+# # Override standard doctype classes
 
 # override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
+# 	"Attendance": "pointage_cdk.custom_class.CustomAttendance.CustomAttendance"
 # }
 
-# Document Events
-# ---------------
-# Hook on document methods and events
+# # Document Events
+# # ---------------
+# # Hook on document methods and events
 
 # doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
+# 	# "Attendance": {
+# 	# 	# "mark_attendance": "method",
+# 	# 	"on_validate": "pointage_cdk.events.eventAttendance.setValuesManagement",
+# 	# 	"on_trash": "method"
+# 	# }
+# 	"Employee": {
+# 		"mark_attendance": "method",
+# 		"on_update": "pointage_cdk.events.eventAttendance.updateEmployee",
 # 		"on_trash": "method"
-#	}
+# 	}
 # }
 
 # Scheduled Tasks
@@ -128,9 +133,15 @@ app_license = "MIT"
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "pointage_cdk.event.get_events"
-# }
+override_whitelisted_methods = {
+    # "erpnext.hr.doctype.attendance.attendance.mark_bulk_attendance": "pointage_cdk.events.eventAttendance.mark_bulk_attendance"
+	"erpnext.hr.doctype.attendance.attendance.get_unmarked_days": "pointage_cdk.events.eventAttendance.get_unmarked_days"
+    
+}
+fixtures = ["Custom Field", "DocType", "Property Setter"]
+
+
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
